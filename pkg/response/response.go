@@ -2,6 +2,7 @@ package response
 
 import "github.com/aws/aws-lambda-go/events"
 
+// BadRequest can be directly returned in case of some invalid data
 func BadRequest(message string) (events.APIGatewayProxyResponse, error) {
 	return events.APIGatewayProxyResponse{
 		Body:       message,
@@ -9,6 +10,7 @@ func BadRequest(message string) (events.APIGatewayProxyResponse, error) {
 	}, nil
 }
 
+// TemporaryRedirect can be directly returned in case of temporary redirection (code 307)
 func TemporaryRedirect(location string) (events.APIGatewayProxyResponse, error) {
 	return events.APIGatewayProxyResponse{
 		Headers: map[string]string{

@@ -2,6 +2,7 @@
 
 ![Register service](https://github.com/vranystepan/email/workflows/Register%20service/badge.svg)
 [![Codeac](https://static.codeac.io/badges/2-332261928.svg "Codeac")](https://app.codeac.io/github/vranystepan/email)
+[![Go Report Card](https://goreportcard.com/badge/github.com/vranystepan/email)](https://goreportcard.com/report/github.com/vranystepan/email)
 
 I'd like to own my audience as per [Always Own Your platform](https://www.alwaysownyourplatform.com). Hence I'm preparing this simple platform for
 emailing that's gonna help me with registration and stuff like such.
@@ -10,7 +11,19 @@ And as I'm AWS partner, It's gonna be built from AWS components. Also
 it's gonna be a bit over engineered because I'd like to play with some
 services.
 
-### Infrastructure
+## Stack
+
+- **AWS Lambda** for all backend operations
+- **AWS SQS** for messaging
+- **AWS Simple Email Service** for the delivering of e-mail messages
+- **AWS DynamoDB** for the persistence
+- **AWS API Gateway**
+- **AWS S3**
+
+## Infrastructure
+
+All the infrastructure components are provisioned with CloudFormation.
+You can find the concrete instructions below.
 
 ### Artifacts
 

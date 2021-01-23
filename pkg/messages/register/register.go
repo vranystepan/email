@@ -6,19 +6,18 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/sqs"
+	"github.com/vranystepan/email/pkg/service"
 )
 
-type SQSService interface {
-	SendMessage(*sqs.SendMessageInput) (*sqs.SendMessageOutput, error)
-}
-
-type RegisterPayload struct {
+// Payload holds registration data
+type Payload struct {
 	TimeCreated time.Time `json:"timeCreated"`
 	Source      string    `json:"source"`
 	Email       string    `json:"email"`
 }
 
-func (r RegisterPayload) JSON() (string, error) {
+// JSON converts RegisterPayload data to JSON string
+func (r Payload) JSON() (string, error) {
 	b, err := json.Marshal(r)
 	if err != nil {
 		return "", err
@@ -26,7 +25,8 @@ func (r RegisterPayload) JSON() (string, error) {
 	return string(b), nil
 }
 
-func (r RegisterPayload) Send(svc SQSService, queue string) error {
+// Send sends message to the given SQS queue
+func (r Payload) Send(svc service.SQS, queue string) error {
 	// convert body to JSON
 	body, err := r.JSON()
 	if err != nil {

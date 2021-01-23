@@ -19,7 +19,7 @@ LAMBDA_NAME=$(aws cloudformation describe-stacks --stack-name "email-${SERVICE}"
 GATEWAY_ID=$(aws cloudformation describe-stacks --stack-name gateway --query "Stacks[0].Outputs[?OutputKey=='GatewayID'].OutputValue" --output text)
 
 echo "setting ${LAMBDA_NAME} to artiface version ${LAMBDA_VERSION}"
-aws lambda update-function-code --function-name "${LAMBDA_NAME}" --s3-object-version "${LAMBDA_VERSION}" --s3-bucket="${S3_BUCKET}" --s3-key="${SERVICE}.zip"
+aws lambda update-function-code --function-name "${LAMBDA_NAME}" --s3-object-version "${LAMBDA_VERSION}" --s3-bucket="${S3_BUCKET}" --s3-key="${SERVICE}.zip" | jq '.RevisionId'
 
 echo "promoting API gateway"
 aws apigateway create-deployment --rest-api-id "${GATEWAY_ID}" --stage-name main

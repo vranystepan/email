@@ -46,7 +46,7 @@ jobs:
         uses: actions/download-artifact@master
         with:
           name: register
-          path: ./bin/register/main
+          path: ./bin/register/
       - name: Show AWS CLI version
         run: aws --version
       - name: Upload artifacts to s3

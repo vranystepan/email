@@ -1,0 +1,82 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  RegisterFunctionARN:
+    Type: String
+
+Resources:
+  Gateway:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+      Name: email
+
+  # RootMethod:
+  #   Type: AWS::ApiGateway::Method
+  #   Properties:
+  #     AuthorizationType: NONE
+  #     HttpMethod: GET
+  #     Integration:
+  #       IntegrationHttpMethod: POST
+  #       Type: AWS_PROXY
+  #       Uri: !Sub
+  #         - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${lambdaArn}/invocations
+  #         - lambdaArn: !Ref RegisterFunctionARN
+  #     ResourceId: !GetAtt Gateway.RootResourceId
+  #     RestApiId: !Ref Gateway
+
+  VerificationResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !GetAtt Gateway.RootResourceId
+      PathPart: verification
+      RestApiId: !Ref Gateway
+
+  EmailResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !GetAtt Gateway.RootResourceId
+      PathPart: email
+      RestApiId: !Ref Gateway
+
+  RegisterEmailMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: POST
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Sub
+          - arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${lambdaArn}/invocations
+          - lambdaArn: !Ref RegisterFunctionARN
+      ResourceId: !Ref EmailResource
+      RestApiId: !Ref Gateway
+
+  Deployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn:
+      - RegisterEmailMethod
+    Properties:
+      RestApiId: !Ref Gateway
+      StageName: main
+
+  RegisterInvoke:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref RegisterFunctionARN
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub
+        - arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${apiGateway}/${apiGatewayStageName}/${apiGatewayHTTPMethod}/email
+        - apiGateway: !Ref Gateway
+          apiGatewayStageName: main
+          apiGatewayHTTPMethod: POST
+
+Outputs:
+  GatewayID:
+    Value: !Ref Gateway
+
+

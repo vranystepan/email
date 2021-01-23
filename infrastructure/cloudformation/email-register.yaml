@@ -1,0 +1,83 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  BucketName:
+    Type: String
+  BucketKey:
+    Type: String
+    Default: register.zip
+  Version:
+    Type: String
+    Default: t6p_kF2zlAZjYmkTDhGOvwaValT7aoip
+
+Resources:
+
+  Artifacts:
+    Type: AWS::S3::Bucket
+    Properties:
+      VersioningConfiguration:
+        Status: Enabled
+
+  Queue: 
+    Type: AWS::SQS::Queue
+
+  Policy:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      Description: Policy for creating a test database
+      Path: /
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - "sqs:SendMessage"
+            Resource:
+              - !GetAtt Queue.Arn
+          - Effect: Allow
+            Action:
+              - "logs:CreateLogGroup"
+              - "logs:CreateLogStream"
+              - "logs:PutLogEvents"
+            Resource:
+              - "*"
+
+  Role:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+              - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /
+      ManagedPolicyArns:
+        - !Ref Policy
+
+  Function:
+    Type: AWS::Lambda::Function
+    Properties:
+      Runtime: go1.x
+      Role: !GetAtt Role.Arn
+      Handler: main
+      Code:
+        S3Bucket: !Ref BucketName
+        S3Key: !Ref BucketKey
+        S3ObjectVersion: !Ref Version
+      Environment:
+        Variables:
+          CONFIG_SQS_EMAIL_REGISTRATION_QUEUE_URL: !Ref Queue
+
+Outputs:
+  QueueURL:
+    Value: !Ref Queue
+  RoleARN:
+    Value: !GetAtt Role.Arn
+  FunctionARN:
+    Value: !GetAtt Function.Arn
+  FunctionName:
+    Value: !Ref Function

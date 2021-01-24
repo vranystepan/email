@@ -1,0 +1,4 @@
+templates:
+  - "infrastructure/cloudformation/*.yaml"
+include_checks:
+  - I

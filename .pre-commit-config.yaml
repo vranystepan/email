@@ -13,3 +13,8 @@ repos:
     hooks:
     -   id: cfn-python-lint
         files: infrastructure/cloudformation/.*\.(json|yml|yaml)$
+
+-   repo: https://github.com/tekwizely/pre-commit-golang
+    rev: master
+    hooks:
+    -   id: golangci-lint

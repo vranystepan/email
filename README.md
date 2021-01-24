@@ -66,6 +66,18 @@ aws cloudformation deploy \
         QueueARN="${LAMBDA_REGISTER_EMAIL_QUEUE_ARN}"
 ```
 
+### Create verify resources
+
+```bash
+aws cloudformation deploy \
+    --stack-name email-verify \
+    --template-file ./infrastructure/cloudformation/email-verify.yaml \
+    --capabilities CAPABILITY_IAM \
+    --no-fail-on-empty-changeset \
+    --parameter-overrides \
+        BucketName="${S3_BUCKET}"
+```
+
 ### Create gateway
 
 ```bash

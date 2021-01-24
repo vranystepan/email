@@ -18,14 +18,14 @@ Resources:
       VersioningConfiguration:
         Status: Enabled
 
-  Queue: 
+  Queue:
     Type: AWS::SQS::Queue
     Properties:
       RedrivePolicy:
         deadLetterTargetArn: !GetAtt DeadLetterQueue.Arn
         maxReceiveCount: 5
 
-  DeadLetterQueue: 
+  DeadLetterQueue:
     Type: AWS::SQS::Queue
 
   Policy:

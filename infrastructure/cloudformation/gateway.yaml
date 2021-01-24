@@ -78,5 +78,3 @@ Resources:
 Outputs:
   GatewayID:
     Value: !Ref Gateway
-
-

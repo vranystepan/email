@@ -24,4 +24,3 @@ aws s3 cp ${SERVICE}.zip s3://${S3_BUCKET}/
 
 # get the version ID
 aws s3api list-object-versions --bucket ${S3_BUCKET} --query "reverse(sort_by(Versions, &LastModified))[0].VersionId" --output text
-

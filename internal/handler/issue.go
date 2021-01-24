@@ -45,7 +45,7 @@ func Issue(dynamo service.DynamoDB, sqs service.SQS, table string, queue string)
 			if !valid {
 				log.
 					WithField("email", payload.Email).
-					Error("verification request can't be sent now")
+					Error("can't be sent now, discarding")
 				return nil
 			}
 

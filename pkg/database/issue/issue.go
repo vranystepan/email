@@ -54,7 +54,7 @@ func (i *Item) Check(dynamo service.DynamoDB, table string) (bool, error) {
 		WithField("email", i.Email).
 		WithField("last", i.Last).
 		Info("email is already in DB")
-	diff := time.Now().Sub(i.Last)
+	diff := time.Since(i.Last)
 
 	// duration can be parametrized in future
 	if diff < time.Minute*5 {

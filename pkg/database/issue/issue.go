@@ -19,7 +19,6 @@ type Item struct {
 
 // Check checks if the previous request is older than 5 minutes / 300 seconds
 func (i *Item) Check(dynamo service.DynamoDB, table string) (bool, error) {
-
 	// prepare input for search
 	input := prepareQuery(table, i.Email)
 

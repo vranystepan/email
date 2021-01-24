@@ -12,6 +12,7 @@ import (
 	"github.com/vranystepan/email/internal/handler"
 )
 
+//nolint
 func init() {
 	log.SetFormatter(&log.JSONFormatter{})
 }
@@ -28,6 +29,14 @@ func main() {
 	table := os.Getenv("CONFIG_DYNAMODB_TABLE_NAME")
 	queue := os.Getenv("CONFIG_SQS_EMAIL_ISSUE_QUEUE_URL")
 
+	// create params struct for Issue handler
+	params := handler.IssueParams{
+		Dynamo: dynamoSvc,
+		SQS:    sqsSvc,
+		Table:  table,
+		Queue:  queue,
+	}
+
 	// start lambda function
-	lambda.Start(handler.Issue(dynamoSvc, sqsSvc, table, queue))
+	lambda.Start(handler.Issue(params))
 }

@@ -13,8 +13,14 @@ import (
 	"github.com/vranystepan/email/pkg/service"
 )
 
+// RegisterParams contains params for Register function to minify signature
+type RegisterParams struct {
+	SQS   service.SQS
+	Queue string
+}
+
 // Register is the main handler for the mail registration service
-func Register(sqs service.SQS, queue string) func(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func Register(p RegisterParams) func(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) { //nolint
 	return func(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 		params, err := url.ParseQuery(req.Body)
 		if err != nil {
@@ -38,7 +44,7 @@ func Register(sqs service.SQS, queue string) func(ctx context.Context, req event
 		}
 
 		// send payload to message broker
-		err = payload.Send(sqs, queue)
+		err = payload.Send(p.SQS, p.Queue)
 		if err != nil {
 			return events.APIGatewayProxyResponse{}, err
 		}

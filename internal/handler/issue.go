@@ -11,8 +11,16 @@ import (
 	"github.com/vranystepan/email/pkg/service"
 )
 
+// IssueParams contains params for Issue function to minify signature
+type IssueParams struct {
+	Dynamo service.DynamoDB
+	SQS    service.SQS
+	Table  string
+	Queue  string
+}
+
 // Issue creates a verification request based on the data from SQS
-func Issue(dynamo service.DynamoDB, sqs service.SQS, table string, queue string) func(ctx context.Context, sqsEvent events.SQSEvent) error {
+func Issue(p IssueParams) func(ctx context.Context, sqsEvent events.SQSEvent) error {
 	return func(ctx context.Context, sqsEvent events.SQSEvent) error {
 		for _, message := range sqsEvent.Records {
 			payload, err := register.Parse(message.Body)
@@ -32,7 +40,7 @@ func Issue(dynamo service.DynamoDB, sqs service.SQS, table string, queue string)
 			}
 
 			// here I need to create some throttling
-			valid, err := item.Check(dynamo, table)
+			valid, err := item.Check(p.Dynamo, p.Table)
 			if err != nil {
 				log.
 					WithField("error", err).
@@ -50,7 +58,7 @@ func Issue(dynamo service.DynamoDB, sqs service.SQS, table string, queue string)
 			}
 
 			// save item to db
-			err = item.Save(dynamo, table)
+			err = item.Save(p.Dynamo, p.Table)
 			if err != nil {
 				log.
 					WithField("error", err).
@@ -59,8 +67,7 @@ func Issue(dynamo service.DynamoDB, sqs service.SQS, table string, queue string)
 				return err
 			}
 
-			// here I need to send message to email system
-			err = issue.New(item.Email).Send(sqs, queue)
+			err = issue.New(item.Email).Send(p.SQS, p.Queue)
 			if err != nil {
 				log.
 					WithField("error", err).

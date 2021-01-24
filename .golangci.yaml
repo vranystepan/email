@@ -1,0 +1,28 @@
+run:
+  concurrency: 4
+  timeout: 1m
+  issues-exit-code: 1
+  tests: true
+
+linters-settings:
+  dupl: {}
+
+linters:
+  enable:
+    - dupl
+    - funlen
+    - gochecknoglobals
+    - gochecknoinits
+    - gocognit
+    - gocritic
+    - gosec
+    - lll
+    - misspell
+    - nestif
+    - whitespace
+    - golint
+    - asciicheck
+    - dogsled
+    - goconst
+    - scopelint
+    - unconvert

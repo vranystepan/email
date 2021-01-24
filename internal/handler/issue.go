@@ -5,7 +5,7 @@ import (
 
 	"github.com/aws/aws-lambda-go/events"
 	log "github.com/sirupsen/logrus"
-	"github.com/vranystepan/email/pkg/database/verification"
+	db "github.com/vranystepan/email/pkg/database/issue"
 	"github.com/vranystepan/email/pkg/messages/issue"
 	"github.com/vranystepan/email/pkg/messages/register"
 	"github.com/vranystepan/email/pkg/service"
@@ -27,7 +27,7 @@ func Issue(dynamo service.DynamoDB, sqs service.SQS, table string, queue string)
 				Info("processing payload")
 
 			// prepare database item
-			item := verification.Item{
+			item := db.Item{
 				Email: payload.Email,
 			}
 

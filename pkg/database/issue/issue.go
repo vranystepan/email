@@ -1,4 +1,4 @@
-package verification
+package issue
 
 import (
 	"time"
@@ -13,7 +13,8 @@ import (
 // Item is representation of verification record
 type Item struct {
 	Email string
-	Last  time.Time
+	// Last is the last time of verification request
+	Last time.Time
 }
 
 // Check checks if the previous request is older than 5 minutes / 300 seconds

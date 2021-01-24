@@ -3,10 +3,11 @@
 # make sure SERVICE is not propagated from the parent
 unset SERVICE
 
-while getopts 's:' c
+while getopts 's:p' c
 do
   case $c in
     s) SERVICE=$OPTARG ;;
+    p) PROMOTE="true" ;;
   esac
 done
 
@@ -21,5 +22,8 @@ GATEWAY_ID=$(aws cloudformation describe-stacks --stack-name gateway --query "St
 echo "setting ${LAMBDA_NAME} to artiface version ${LAMBDA_VERSION}"
 aws lambda update-function-code --function-name "${LAMBDA_NAME}" --s3-object-version "${LAMBDA_VERSION}" --s3-bucket="${S3_BUCKET}" --s3-key="${SERVICE}.zip" | jq '.RevisionId'
 
-echo "promoting API gateway"
-aws apigateway create-deployment --rest-api-id "${GATEWAY_ID}" --stage-name main
+if [ "${PROMOTE}" = "true" ];
+then
+    echo "promoting API gateway"
+    aws apigateway create-deployment --rest-api-id "${GATEWAY_ID}" --stage-name main
+fi

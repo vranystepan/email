@@ -1,4 +1,4 @@
-package register
+package issue
 
 import (
 	"encoding/json"
@@ -9,11 +9,18 @@ import (
 	"github.com/vranystepan/email/pkg/service"
 )
 
+// New creates a new Payload struct
+func New(email string) Payload {
+	return Payload{
+		Email:       email,
+		TimeCreated: time.Now(),
+	}
+}
+
 // Payload holds registration data
 type Payload struct {
-	TimeCreated time.Time `json:"timeCreated"`
-	Source      string    `json:"source"`
 	Email       string    `json:"email"`
+	TimeCreated time.Time `json:"timeCreated"`
 }
 
 // JSON converts RegisterPayload data to JSON string

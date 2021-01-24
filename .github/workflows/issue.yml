@@ -1,15 +1,13 @@
-name: Register service
+name: Issue service
 
 on:
   push:
     branches:
       - main
     paths:
-      - 'pkg/email/**'
-      - 'pkg/response/**'
       - 'pkg/message/register/**'
-      - 'internal/handler/register.go'
-      - 'cmd/register/main.go'
+      - 'internal/handler/issue.go'
+      - 'cmd/issue/main.go'
 
 jobs:
   build:
@@ -25,12 +23,12 @@ jobs:
       - name: Show Go version
         run: go version
       - name: Build artifacts
-        run: ./scripts/build.sh -s register
+        run: ./scripts/build.sh -s issue
       - name: Upload artifact
         uses: actions/upload-artifact@master
         with:
-          name: register
-          path: ./bin/register/main
+          name: issue
+          path: ./bin/issue/main
 
   upload:
     name: Upload
@@ -46,12 +44,12 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@master
         with:
-          name: register
-          path: ./bin/register/
+          name: issue
+          path: ./bin/issue/
       - name: Show AWS CLI version
         run: aws --version
       - name: Upload artifacts to s3
-        run: ./scripts/upload.sh -s register
+        run: ./scripts/upload.sh -s issue
 
   promote:
     name: Promote
@@ -67,4 +65,4 @@ jobs:
       - name: Show AWS CLI version
         run: aws --version
       - name: Promote new version
-        run: ./scripts/promote.sh -s register
+        run: ./scripts/promote.sh -s issue

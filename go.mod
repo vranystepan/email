@@ -7,4 +7,5 @@ require (
 	github.com/aws/aws-lambda-go v1.22.0
 	github.com/aws/aws-sdk-go v1.36.31
 	github.com/client9/misspell v0.3.4 // indirect
+	github.com/sirupsen/logrus v1.7.0
 )

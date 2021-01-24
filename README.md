@@ -48,6 +48,24 @@ aws cloudformation deploy \
         BucketName="${S3_BUCKET}"
 ```
 
+### Create issue resources
+
+```bash
+LAMBDA_REGISTER_EMAIL_QUEUE_ARN=$(aws cloudformation describe-stacks \
+  --stack-name email-register \
+  --query "Stacks[0].Outputs[?OutputKey=='QueueARN'].OutputValue" \
+  --output text)
+
+aws cloudformation deploy \
+    --stack-name email-issue \
+    --template-file ./infrastructure/cloudformation/email-issue.yaml \
+    --capabilities CAPABILITY_IAM \
+    --no-fail-on-empty-changeset \
+    --parameter-overrides \
+        BucketName="${S3_BUCKET}" \
+        QueueARN="${LAMBDA_REGISTER_EMAIL_QUEUE_ARN}"
+```
+
 ### Create gateway
 
 ```bash

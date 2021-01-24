@@ -18,6 +18,7 @@ S3_BUCKET=$(aws cloudformation describe-stacks --stack-name artifacts --query "S
 
 # upload code to the s3 bucket
 cd ./bin/${SERVICE}
+chmod +x main
 zip ${SERVICE}.zip main
 aws s3 cp ${SERVICE}.zip s3://${S3_BUCKET}/
 

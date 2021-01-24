@@ -5,19 +5,15 @@ Parameters:
     Type: String
   BucketKey:
     Type: String
-    Default: register.zip
+    Default: issue.zip
   Version:
     Type: String
-    Default: t6p_kF2zlAZjYmkTDhGOvwaValT7aoip
+    Default: GgvqEwhUHRkPeuCKTCvwiTOGt6TWjBp4
+  QueueARN:
+    Description: ARN of the queue that triggers this function
+    Type: String
 
 Resources:
-
-  Artifacts:
-    Type: AWS::S3::Bucket
-    Properties:
-      VersioningConfiguration:
-        Status: Enabled
-
   Queue: 
     Type: AWS::SQS::Queue
     Properties:
@@ -38,9 +34,28 @@ Resources:
         Statement:
           - Effect: Allow
             Action:
+              - "sqs:ReceiveMessage"
+              - "sqs:DeleteMessage"
+              - "sqs:GetQueueAttributes"
+              - "sqs:ChangeMessageVisibility"
+            Resource:
+              - !Ref QueueARN
+          - Effect: Allow
+            Action:
               - "sqs:SendMessage"
             Resource:
               - !GetAtt Queue.Arn
+          - Effect: Allow
+            Action:
+              - "dynamodb:BatchGetItem"
+              - "dynamodb:GetItem"
+              - "dynamodb:Query"
+              - "dynamodb:Scan"
+              - "dynamodb:BatchWriteItem"
+              - "dynamodb:PutItem"
+              - "dynamodb:UpdateItem"
+            Resource:
+              - !GetAtt Table.Arn
           - Effect: Allow
             Action:
               - "logs:CreateLogGroup"
@@ -77,7 +92,27 @@ Resources:
         S3ObjectVersion: !Ref Version
       Environment:
         Variables:
-          CONFIG_SQS_EMAIL_REGISTRATION_QUEUE_URL: !Ref Queue
+          CONFIG_DYNAMODB_TABLE_NAME: !Ref Table
+          CONFIG_SQS_EMAIL_ISSUE_QUEUE_URL: !Ref Queue
+
+  EventMapping:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      BatchSize: 1
+      Enabled: true
+      FunctionName: !GetAtt Function.Arn
+      EventSourceArn: !Ref QueueARN
+
+  Table:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+      - AttributeName: Email
+        AttributeType: S
+      KeySchema:
+      - AttributeName: Email
+        KeyType: HASH
 
 Outputs:
   QueueURL:
@@ -90,3 +125,7 @@ Outputs:
     Value: !GetAtt Function.Arn
   FunctionName:
     Value: !Ref Function
+  TableName:
+    Value: !Ref Table
+  TableARN:
+    Value: !GetAtt Table.Arn

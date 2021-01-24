@@ -14,7 +14,7 @@ import (
 )
 
 // Register is the main handler for the mail registration service
-func Register(svc service.SQS, queue string) func(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func Register(sqs service.SQS, queue string) func(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	return func(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 		params, err := url.ParseQuery(req.Body)
 		if err != nil {
@@ -38,7 +38,7 @@ func Register(svc service.SQS, queue string) func(ctx context.Context, req event
 		}
 
 		// send payload to message broker
-		err = payload.Send(svc, queue)
+		err = payload.Send(sqs, queue)
 		if err != nil {
 			return events.APIGatewayProxyResponse{}, err
 		}

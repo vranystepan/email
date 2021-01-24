@@ -96,6 +96,7 @@ func (i Item) Save(dynamo service.DynamoDB, table string) error {
 	return nil
 }
 
+// prepareQuery prepares query to check the existence of email address
 func prepareQuery(table string, email string) *dynamodb.GetItemInput {
 	return &dynamodb.GetItemInput{
 		TableName: aws.String(table),

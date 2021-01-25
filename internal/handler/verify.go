@@ -5,6 +5,7 @@ import (
 
 	"github.com/aws/aws-lambda-go/events"
 	log "github.com/sirupsen/logrus"
+	"github.com/vranystepan/email/pkg/messages/email/verify"
 	"github.com/vranystepan/email/pkg/messages/issue"
 	"github.com/vranystepan/email/pkg/service"
 )
@@ -28,6 +29,21 @@ func Verify(p VerifyParams) func(ctx context.Context, sqsEvent events.SQSEvent) 
 			log.
 				WithField("email", payload.Email).
 				Info("processing payload")
+
+			email := verify.Email{
+				ToAddresses: payload.Email,
+				Sender:      "stepan@vrany.dev",
+				HTML:        "<b>hello</b>",
+				Text:        "hello",
+				Subject:     "verification!",
+			}
+			err = email.Send(p.SES)
+			if err != nil {
+				log.
+					WithField("error", err).
+					Error("could not send email message")
+				return err
+			}
 		}
 		return nil
 	}

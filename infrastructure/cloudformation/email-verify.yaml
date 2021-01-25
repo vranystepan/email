@@ -1,5 +1,95 @@
 AWSTemplateFormatVersion: 2010-09-09
 
-Parameters: {}
+Parameters:
+  BucketName:
+    Type: String
+  BucketKey:
+    Type: String
+    Default: verify.zip
+  EmailTemplateBucketName:
+    Type: String
+  EmailTemplateBucketPath:
+    Type: String
+    Default: verify.html.tpl
+  Version:
+    Type: String
+    Default: 4Xp6iJOP9Ssh3ooiKM8vDJuLBs7tzeMi
+  QueueARN:
+    Description: ARN of the queue that triggers this function
+    Type: String
 
-Resources: {}
+Resources:
+  Policy:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      Description: Policy for creating a test database
+      Path: /
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - "sqs:ReceiveMessage"
+              - "sqs:DeleteMessage"
+              - "sqs:GetQueueAttributes"
+              - "sqs:ChangeMessageVisibility"
+            Resource:
+              - !Ref QueueARN
+          - Effect: Allow
+            Action:
+              - "logs:CreateLogGroup"
+              - "logs:CreateLogStream"
+              - "logs:PutLogEvents"
+            Resource:
+              - "*"
+          - Effect: Allow
+            Action:
+              - "ses:SendEmail"
+              - "ses:SendRawEmail"
+            Resource:
+              - "*"
+          - Effect: Allow
+            Action:
+              - "s3:GetObject"
+              - "s3:GetObjectVersion"
+            Resource:
+              - !Sub arn:aws:s3:::${EmailTemplateBucketName}/${EmailTemplateBucketPath}"
+
+  Role:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+              - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /
+      ManagedPolicyArns:
+        - !Ref Policy
+
+  Function:
+    Type: AWS::Lambda::Function
+    Properties:
+      Runtime: go1.x
+      Role: !GetAtt Role.Arn
+      Handler: main
+      Code:
+        S3Bucket: !Ref BucketName
+        S3Key: !Ref BucketKey
+        S3ObjectVersion: !Ref Version
+      Environment:
+        Variables:
+          CONFIG_VERIFY_EMAIL_TEMPLATE_BUCKET_NAME: !Ref EmailTemplateBucketName
+          CONFIG_VERIFY_EMAIL_TEMPLATE_BUCKET_PATH: !Ref EmailTemplateBucketPath
+
+  EventMapping:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      BatchSize: 1
+      Enabled: true
+      FunctionName: !GetAtt Function.Arn
+      EventSourceArn: !Ref QueueARN

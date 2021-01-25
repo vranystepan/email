@@ -69,13 +69,20 @@ aws cloudformation deploy \
 ### Create verify resources
 
 ```bash
+LAMBDA_ISSUE_VERIFICATION_QUEUE_ARN=$(aws cloudformation describe-stacks \
+  --stack-name email-issue \
+  --query "Stacks[0].Outputs[?OutputKey=='QueueARN'].OutputValue" \
+  --output text)
+
 aws cloudformation deploy \
     --stack-name email-verify \
     --template-file ./infrastructure/cloudformation/email-verify.yaml \
     --capabilities CAPABILITY_IAM \
     --no-fail-on-empty-changeset \
     --parameter-overrides \
-        BucketName="${S3_BUCKET}"
+        BucketName="${S3_BUCKET}" \
+        EmailTemplateBucketName="${S3_BUCKET}" \
+        QueueARN="${LAMBDA_ISSUE_VERIFICATION_QUEUE_ARN}"
 ```
 
 ### Create gateway

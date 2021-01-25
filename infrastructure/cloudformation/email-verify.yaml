@@ -17,6 +17,8 @@ Parameters:
   QueueARN:
     Description: ARN of the queue that triggers this function
     Type: String
+  SenderEmailAddress:
+    Type: String
 
 Resources:
   Policy:
@@ -85,6 +87,7 @@ Resources:
         Variables:
           CONFIG_VERIFY_EMAIL_TEMPLATE_BUCKET_NAME: !Ref EmailTemplateBucketName
           CONFIG_VERIFY_EMAIL_TEMPLATE_BUCKET_PATH: !Ref EmailTemplateBucketPath
+          CONFIG_VERIFY_SENDER_EMAIL_ADDRESS: !Ref SenderEmailAddress
 
   EventMapping:
     Type: AWS::Lambda::EventSourceMapping

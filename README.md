@@ -82,7 +82,8 @@ aws cloudformation deploy \
     --parameter-overrides \
         BucketName="${S3_BUCKET}" \
         EmailTemplateBucketName="${S3_BUCKET}" \
-        QueueARN="${LAMBDA_ISSUE_VERIFICATION_QUEUE_ARN}"
+        QueueARN="${LAMBDA_ISSUE_VERIFICATION_QUEUE_ARN}" \
+        SenderEmailAddress="stepan@vrany.dev"
 ```
 
 ### Create gateway

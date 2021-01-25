@@ -12,7 +12,8 @@ import (
 
 // VerifyParams contains params for Verify function to minify signature
 type VerifyParams struct {
-	SES service.SES
+	SES    service.SES
+	Sender string
 }
 
 // Verify sends verification email via SES
@@ -30,9 +31,14 @@ func Verify(p VerifyParams) func(ctx context.Context, sqsEvent events.SQSEvent) 
 				WithField("email", payload.Email).
 				Info("processing payload")
 
+			// here I need to create some JWT magic
+
+			// here I need to prepare email body
+
+			// send email via SES
 			email := verify.Email{
 				ToAddresses: payload.Email,
-				Sender:      "stepan@vrany.dev",
+				Sender:      p.Sender,
 				HTML:        "<b>hello</b>",
 				Text:        "hello",
 				Subject:     "verification!",

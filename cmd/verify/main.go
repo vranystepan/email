@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ses"
@@ -20,9 +22,13 @@ func main() {
 	}))
 	sesSvc := ses.New(sess)
 
+	// obtain configuration params
+	email := os.Getenv("CONFIG_VERIFY_SENDER_EMAIL_ADDRESS")
+
 	// create params struct for Issue handler
 	params := handler.VerifyParams{
-		SES: sesSvc,
+		SES:    sesSvc,
+		Sender: email,
 	}
 
 	// start lambda function

@@ -7,7 +7,8 @@ on:
     paths:
       - 'pkg/email/**'
       - 'pkg/response/**'
-      - 'pkg/message/register/**'
+      - 'pkg/messages/register/**'
+      - 'pkg/messages/issue/**'
       - 'internal/handler/register.go'
       - 'cmd/register/main.go'
 

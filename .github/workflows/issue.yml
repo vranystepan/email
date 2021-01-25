@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'pkg/message/register/**'
+      - 'pkg/messages/register/**'
       - 'internal/handler/issue.go'
       - 'cmd/issue/main.go'
 

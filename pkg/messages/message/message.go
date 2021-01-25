@@ -37,13 +37,3 @@ func (r Payload) Send(svc service.SQS, queue string) error {
 	_, err = svc.SendMessage(message)
 	return err
 }
-
-// Parse converts JSON paylod to Payload struct
-func Parse(message string) (Payload, error) {
-	var m Payload
-	err := json.Unmarshal([]byte(message), &m)
-	if err != nil {
-		return m, err
-	}
-	return m, nil
-}

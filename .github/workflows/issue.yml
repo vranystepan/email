@@ -9,6 +9,7 @@ on:
       - 'pkg/messages/register/**'
       - 'internal/handler/issue.go'
       - 'cmd/issue/main.go'
+      - '.github/workflows/issue.yml'
 
 jobs:
   build:

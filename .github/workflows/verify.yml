@@ -9,6 +9,7 @@ on:
       - 'pkg/messages/issue/**'
       - 'internal/handler/verify.go'
       - 'cmd/verify/main.go'
+      - '.github/workflows/verify.yml'
 
 jobs:
   build:

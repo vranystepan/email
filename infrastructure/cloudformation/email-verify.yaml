@@ -93,3 +93,11 @@ Resources:
       Enabled: true
       FunctionName: !GetAtt Function.Arn
       EventSourceArn: !Ref QueueARN
+
+Outputs:
+  RoleARN:
+    Value: !GetAtt Role.Arn
+  FunctionARN:
+    Value: !GetAtt Function.Arn
+  FunctionName:
+    Value: !Ref Function

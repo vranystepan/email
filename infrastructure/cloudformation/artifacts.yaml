@@ -6,6 +6,8 @@ Resources:
     Properties:
       VersioningConfiguration:
         Status: Enabled
+      PublicAccessBlockConfiguration:
+        RestrictPublicBuckets: True
 
 Outputs:
   BucketName:

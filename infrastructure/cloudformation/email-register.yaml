@@ -17,6 +17,8 @@ Resources:
     Properties:
       VersioningConfiguration:
         Status: Enabled
+      PublicAccessBlockConfiguration:
+        RestrictPublicBuckets: True
 
   Queue:
     Type: AWS::SQS::Queue
